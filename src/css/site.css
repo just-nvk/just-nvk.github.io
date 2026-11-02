@@ -284,6 +284,17 @@ a.card:hover{border-color:var(--line-strong)}
 .gallery figcaption{margin-top:12px;font-size:15px;color:var(--muted)}
 .gallery figcaption b{color:var(--ink);font-weight:600;margin-right:8px;font-variant-numeric:tabular-nums}
 @media (max-width:699px){.gallery{grid-template-columns:1fr;gap:24px}}
+.gallery--cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:28px 16px}
+.gallery--cards a{border-color:transparent;background:#0E0F11;border-radius:var(--radius)}
+.gallery--cards a:hover{border-color:var(--ink)}
+.gallery--cards img{width:100%;height:auto}
+@media (max-width:899px){.gallery--cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}}
+.sources{display:grid;gap:12px}
+.sources li{padding:18px 22px;background:var(--white);border:1px solid var(--line);border-radius:var(--radius)}
+.sources a{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--accent);text-decoration:none}
+.sources a:hover{color:var(--accent-hover);text-decoration:underline;text-underline-offset:3px}
+.sources a svg{width:16px;height:16px;flex:none}
+.sources p{margin-top:6px;font-size:15px;line-height:1.55;color:var(--text)}
 .downloads{display:flex;flex-wrap:wrap;gap:12px}
 .downloads small{font-weight:500;opacity:.75}
 .credits,.note{font-size:14px;color:var(--muted)}

@@ -51,10 +51,12 @@ const ICON = {
 // ---------- компоненты ----------
 const tgButton = (cls = 'btn--primary') => `<a class="btn ${cls}" href="${TG.url}" target="_blank" rel="noopener">${T(C.cta.label)}</a>`;
 
-// Картинка из src/img: src без суффикса, рядом должны лежать версии -800.webp и -1600.webp (16:9).
-function picture(r, src, { cls = '', alt = '', sizes = '(max-width: 899px) 100vw, 560px', eager = false } = {}) {
+// Картинка из src/img: src без суффикса, рядом лежат версии -<ширина>.webp.
+// По умолчанию 16:9: -800.webp и -1600.webp. Для других форматов передайте widths и размер большой версии (w, h).
+function picture(r, src, { cls = '', alt = '', sizes = '(max-width: 899px) 100vw, 560px', eager = false, widths = [800, 1600], w = 1600, h = 900 } = {}) {
   const base = `${r}assets/img/${src}`;
-  return `<img${cls ? ` class="${cls}"` : ''} src="${base}-800.webp" srcset="${base}-800.webp 800w, ${base}-1600.webp 1600w" sizes="${sizes}" width="1600" height="900" alt="${esc(alt)}"${eager ? ' fetchpriority="high"' : EAGER ? '' : ' loading="lazy"'}${EAGER ? '' : ' decoding="async"'}>`;
+  const set = widths.map((x) => `${base}-${x}.webp ${x}w`).join(', ');
+  return `<img${cls ? ` class="${cls}"` : ''} src="${base}-${widths[0]}.webp" srcset="${set}" sizes="${sizes}" width="${w}" height="${h}" alt="${esc(alt)}"${eager ? ' fetchpriority="high"' : EAGER ? '' : ' loading="lazy"'}${EAGER ? '' : ' decoding="async"'}>`;
 }
 const slideImg = (r, n, opts) => picture(r, `rovno/slide-${String(n).padStart(2, '0')}`, opts);
 
@@ -347,6 +349,44 @@ ${ctaBand(R.ctaBand)}`;
   return { page, html: layout(page, main) };
 }
 
+async function pageAi() {
+  const A = C.ai;
+  const page = {
+    path: 'cases/ai-2026/', root: '../../', og: 'ai', title: A.title, description: A.description, js: true,
+    nav: [['../../design/#services', 'Услуги'], ['../../design/#cases', 'Кейсы'], ['../../design/#process', 'Как я работаю'], ['../../design/#faq', 'Вопросы']],
+  };
+  const r = page.root;
+  // Карточки 4:5: -540.webp и -1080.webp (оригинал 1080×1350).
+  const cards = A.cards.map((name, i) => {
+    const n = String(i + 1).padStart(2, '0');
+    const img = picture(r, `ai/card-${n}`, { widths: [540, 1080], w: 1080, h: 1350, alt: `Карточка ${i + 1}. ${A.cardAlts[i]}`, sizes: '(max-width: 899px) 50vw, 266px', eager: i < 4 });
+    return `<figure><a href="${r}assets/img/ai/card-${n}-1080.webp" data-lightbox data-caption="${esc(name)}">${img}</a><figcaption><b>${n}</b>${T(name)}</figcaption></figure>`;
+  }).join('\n');
+  const sources = `<ul class="sources">${A.sources.map((s) => `<li><a href="${s.href}" target="_blank" rel="noopener">${T(s.label)}${ICON.arrow}</a><p>${T(s.note)}</p></li>`).join('')}</ul>`;
+  const main = `<section class="case-hero"><div class="container">
+<nav class="crumbs" aria-label="Вы здесь"><a href="${r}design/#cases">${ICON.back}${T('Презентации и инфографика')}</a></nav>
+<span class="kicker">${T(A.kicker)}</span>
+<h1>${T(A.h1)}</h1>
+<p class="lead">${T(A.lead)}</p>
+${caseFacts(A.facts)}
+</div></section>
+<div class="container"><div class="gallery gallery--cards">
+${cards}
+</div></div>
+<div class="container case-body">
+${caseSec('task', 'Задача', A.task.map((p) => `<p>${T(p)}</p>`).join(''))}
+${caseSec('solution', 'Решение', `<p>${T(A.solutionLead)}</p>
+${flow(A.flow, 'Порядок карточек')}
+${tiles(A.decisions)}`)}
+${caseSec('data', 'Данные', `<p>${T(A.dataLead)}</p>
+${sources}`)}
+${caseSec('result', 'Результат', `<p>${T(A.resultLead)}</p>
+${await downloadButtons(r, A.downloads)}`)}
+</div>
+${ctaBand(A.ctaBand)}`;
+  return { page, html: layout(page, main) };
+}
+
 async function pageMint() {
   const M = C.mint;
   const page = {
@@ -450,6 +490,10 @@ html,body{width:1200px;height:630px;margin:0;overflow:hidden}
 .og__cover{border-radius:12px;border:1px solid var(--line);overflow:hidden;background:#fff}
 .og__phone{position:absolute;right:136px;top:35px;width:288px;height:560px;overflow:hidden}
 .og__phone img{position:absolute;left:-390px;top:-20px;width:1068px;max-width:none;height:auto}
+.og__cards{position:absolute;right:72px;top:40px;width:520px;height:550px}
+.og__card{position:absolute;width:400px;height:500px;border-radius:14px;box-shadow:0 2px 4px rgba(20,20,20,.08),0 18px 44px rgba(20,20,20,.22)}
+.og__card--back{right:0;top:36px;width:360px;height:450px;transform:rotate(6deg)}
+.og__card--front{left:0;top:25px}
 </style>`;
   const shell = (cls, inner) => `<!doctype html><html lang="ru"><head><meta charset="utf-8">${css}</head><body><div class="og ${cls}"><span class="wordmark">nvk<i>.</i></span>${inner}<span class="og__foot">t.me/${TG.handle.replace('@', '')}</span></div></body></html>`;
   const slide = (n) => `${r}img/rovno/slide-${String(n).padStart(2, '0')}-1600.webp`;
@@ -458,6 +502,7 @@ html,body{width:1200px;height:630px;margin:0;overflow:hidden}
   if (kind === 'dev') return shell('', `<div><span class="kicker">${T(C.dev.kicker)}</span><h1>${T(C.dev.h1)}</h1></div>${chatSnippet({ full: true })}`);
   // Телефон вырезан из постера видео (кадр 1600×900): телефон занимает x 585–1015, y 30–868.
   if (kind === 'mint') return shell('', `<div><span class="kicker">${T('Кейс · Демо-проект')}</span><h1>${T(C.mint.h1)}</h1><p>${T('Python · aiogram 3 · 37 тестов')}</p></div><div class="og__phone"><img src="${r}img/mint/poster-1600.webp" alt=""></div>`);
+  if (kind === 'ai') return shell('', `<div><span class="kicker">${T('Кейс · Демо-проект')}</span><h1>${T('Карусель «ИИ в 2026»')}</h1><p>${T('8 карточек · реальные данные')}</p></div><div class="og__cards"><img class="og__card og__card--back" src="${r}img/ai/card-04-1080.webp" alt=""><img class="og__card og__card--front" src="${r}img/ai/card-01-1080.webp" alt=""></div>`);
   return shell('', `<div><span class="kicker">${T('Кейс · Демо-проект')}</span><h1>${T('Питч-дек «Ровно»')}</h1><p>${T('12 слайдов · PowerPoint и PDF')}</p></div><div class="og__cover"><img src="${slide(1)}" alt=""></div>`);
 }
 
@@ -491,7 +536,7 @@ async function main() {
   hash.update(await readFile(path.join(SRC, 'js', 'site.js')));
   ASSET_V = hash.digest('hex').slice(0, 8);
 
-  const pages = [pageHub(), pageDirection('design'), pageDirection('dev'), await pageRovno(), await pageMint()];
+  const pages = [pageHub(), pageDirection('design'), pageDirection('dev'), await pageRovno(), await pageAi(), await pageMint()];
   for (const { page, html } of pages) {
     const file = path.join(OUT, page.path, 'index.html');
     await mkdir(path.dirname(file), { recursive: true });
@@ -517,7 +562,7 @@ async function main() {
 
   if (MAKE_OG) {
     await mkdir(path.join(ROOT, 'og'), { recursive: true });
-    for (const k of ['hub', 'design', 'dev', 'rovno', 'mint']) await writeFile(path.join(ROOT, 'og', `${k}.html`), ogPage(k));
+    for (const k of ['hub', 'design', 'dev', 'rovno', 'ai', 'mint']) await writeFile(path.join(ROOT, 'og', `${k}.html`), ogPage(k));
     console.log('✓ og/*.html');
   }
   console.log(`Готово: ${path.relative(ROOT, OUT) || '.'}${DRAFTS ? ' (с черновиками)' : ''}${problems ? `, проблем со ссылками: ${problems}` : ''}`);
