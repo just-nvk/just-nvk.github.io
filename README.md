@@ -43,11 +43,16 @@ python3 -m http.server -d docs 8000     # затем открыть http://local
 2. Отправьте в него эту папку:
    ```sh
    git init -b main
+   git config user.name "nvk"
+   git config user.email "ID+just-nvk@users.noreply.github.com"
    git add .
    git commit -m "Сайт-портфолио"
-   git remote add origin https://github.com/just-nvk/just-nvk.github.io.git
+   git remote add origin https://just-nvk@github.com/just-nvk/just-nvk.github.io.git
    git push -u origin main
    ```
+   Почта в `user.email` — автор коммитов. Свой адрес вида `…+just-nvk@users.noreply.github.com` возьмите на GitHub: Settings → Emails. Без этих двух строк Git подпишет коммит тем аккаунтом, что настроен на компьютере.
+
+   `just-nvk@` в адресе подсказывает Git, под каким аккаунтом входить. Это важно, если на компьютере уже есть вход в другой аккаунт GitHub: иначе `git push` ответит ошибкой 403 `Permission … denied to …`. В окне входа выберите вход через браузер и проверьте, что в браузере открыт аккаунт just-nvk. Если окно не появилось, удалите сохранённый вход: «Диспетчер учётных данных» → «Учётные данные Windows» → записи `git:https://github.com` → «Удалить».
 3. В репозитории откройте Settings → Pages → Build and deployment. Source: Deploy from a branch, Branch: `main`, папка `/docs` → Save.
 4. Через пару минут сайт откроется по адресу `https://just-nvk.github.io/`.
 
