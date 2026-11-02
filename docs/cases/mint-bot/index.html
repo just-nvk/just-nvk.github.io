@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Кейс: бот записи в салон «Мята» — nvk</title>
+<meta name="description" content="Демо-проект: Telegram-бот записи в салон на Python и aiogram 3. Свободное время, подтверждение, напоминания и уведомления администраторам. Код с тестами.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="nvk">
+<meta property="og:title" content="Кейс: бот записи в салон «Мята» — nvk">
+<meta property="og:description" content="Демо-проект: Telegram-бот записи в салон на Python и aiogram 3. Свободное время, подтверждение, напоминания и уведомления администраторам. Код с тестами.">
+<link rel="canonical" href="https://just-nvk.github.io/cases/mint-bot/">
+<meta property="og:url" content="https://just-nvk.github.io/cases/mint-bot/">
+<meta property="og:image" content="https://just-nvk.github.io/assets/img/og/mint.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FAFAF7">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+<link rel="preload" href="../../assets/fonts/inter-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/css/site.css?v=47641e12">
+</head>
+<body>
+<a class="skip" href="#main">Перейти к содержанию</a>
+<header class="site-header"><div class="container site-header__in">
+<a class="wordmark" href="../../" aria-label="nvk — на главную">nvk<i>.</i></a>
+<nav class="nav" aria-label="Разделы"><a href="../../dev/#services">Услуги</a><a href="../../dev/#cases">Кейсы</a><a href="../../dev/#process">Как я работаю</a><a href="../../dev/#faq">Вопросы</a></nav>
+<a class="btn btn--primary btn--sm" href="https://t.me/just_nvk" target="_blank" rel="noopener">Написать в Telegram</a>
+</div></header>
+<main id="main">
+<section class="case-hero"><div class="container">
+<nav class="crumbs" aria-label="Вы здесь"><a href="../../dev/#cases"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Боты и автоматизация</a></nav>
+<span class="kicker"><span class="nw">Демо-проект</span> · Telegram-бот</span>
+<h1>Бот записи в салон «Мята»</h1>
+<p class="lead">Вымышленный салон красоты: клиенты записываются через Telegram без звонков и переписки. Бот показывает только свободное время, подтверждает запись и сам напоминает о визите.</p>
+<ul class="facts"><li><span>Стек</span><b>Python · aiogram 3</b></li><li><span>Хранение</span><b>SQLite — один файл</b></li><li><span>Напоминания</span><b>Накануне и за 2 часа</b></li><li><span>Тесты</span><b>37 тестов на pytest</b></li></ul>
+</div></section>
+<div class="container"><figure class="case-video">
+<video class="case-video__wide" width="1920" height="1080" controls muted playsinline loop preload="none" data-autoplay poster="../../assets/img/mint/poster-1600.webp" aria-label="Видео: клиент записывается на маникюр — выбирает услугу, день и время, подтверждает запись и получает напоминание"><source src="../../assets/video/mint-demo.mp4" type="video/mp4"></video>
+<video class="case-video__tall" width="720" height="1280" controls muted playsinline loop preload="none" data-autoplay poster="../../assets/img/mint/poster-vertical.webp" aria-label="Видео: клиент записывается на маникюр — выбирает услугу, день и время, подтверждает запись и получает напоминание"><source src="../../assets/video/mint-demo-vertical.mp4" type="video/mp4"></video>
+<figcaption>Запись на маникюр — от /start до напоминания, 40 секунд без звука. Тексты и кнопки — те же, что в коде бота.</figcaption>
+</figure></div>
+<div class="container case-body">
+<section class="case-sec" aria-labelledby="task-title"><h2 id="task-title">Задача</h2><div class="case-sec__body"><p>Администратор салона полдня отвечает в мессенджерах: какие есть окна, сколько стоит, можно ли перенести. Клиенты забывают о записи — мастер простаивает.</p><p>Нужен бот, через который клиент сам записывается за минуту, а салон узнаёт о каждой записи и не тратит время на напоминания.</p></div></section>
+<section class="case-sec" aria-labelledby="solution-title"><h2 id="solution-title">Решение</h2><div class="case-sec__body"><p>Клиент записывается на кнопках — печатать ничего не нужно.</p>
+<ol class="flow" aria-label="Шаги записи"><li><span>Услуга</span></li><li><span>День</span></li><li><span>Время</span></li><li><span>Подтверждение</span></li><li><span>Напоминание</span></li></ol>
+<ul class="decisions"><li><h3>Только свободное время</h3><p>Бот учитывает длительность услуги, перерыв и выходные, а мастера подбирает сам — того, кто свободен.</p></li><li><h3>Напоминания</h3><p>Накануне в 18:00 и за 2 часа до визита — с кнопками «Да, приду» и «Перенести».</p></li><li><h3>Перенос и отмена</h3><p>В «Моих записях» клиент сам переносит или отменяет запись, и время сразу освобождается.</p></li><li><h3>Администраторы в курсе</h3><p>О каждой записи, переносе и отмене бот пишет в рабочий чат. Команды /today и /tomorrow показывают расписание.</p></li></ul>
+<p>Услуги и цены, мастера, часы работы и время напоминаний лежат в одном файле настроек — их можно менять без программиста.</p></div></section>
+<section class="case-sec" aria-labelledby="arch-title"><h2 id="arch-title">Как устроено</h2><div class="case-sec__body"><p>Код разделён на слои, и зависимости идут в одну сторону. Поэтому правила расписания проверяются без Telegram, а сценарии — без сети.</p>
+<ol class="flow flow--code" aria-label="Направление зависимостей"><li><span>handlers</span></li><li><span>booking</span></li><li><span>domain + storage</span></li></ol>
+<dl class="arch"><div><dt><code>handlers/</code></dt><dd>Telegram: разбирают нажатия и показывают шаги</dd></div><div><dt><code>booking.py</code></dt><dd>Сценарии: запись, перенос, отмена</dd></div><div><dt><code>domain.py</code></dt><dd>Правила расписания — чистые функции</dd></div><div><dt><code>storage.py</code></dt><dd>SQLite: записи и очередь напоминаний</dd></div><div><dt><code>reminders.py</code></dt><dd>Раз в 30 секунд отправляет наступившие напоминания</dd></div><div><dt><code>notify.py</code></dt><dd>Уведомления в чат администраторов</dd></div><div><dt><code>texts.py, keyboards.py</code></dt><dd>Все тексты и кнопки бота</dd></div><div><dt><code>salon.toml</code></dt><dd>Настройки салона</dd></div></dl></div></section>
+<section class="case-sec" aria-labelledby="decisions-title"><h2 id="decisions-title">Ключевые решения</h2><div class="case-sec__body"><ul class="decisions"><li><h3>Выбор хранится в кнопках</h3><p>Услуга, день и время зашиты в данные кнопки, а не в память бота. После перезапуска любая кнопка в чате продолжает работать.</p></li><li><h3>Напоминания — в базе</h3><p>Это строки в базе, а не таймеры в памяти, поэтому они переживают перезапуск. После простоя придёт одно напоминание, а после начала визита — ни одного.</p></li><li><h3>Без двойной записи</h3><p>Проверка времени и запись — одна транзакция. Кто нажал «Подтвердить» вторым, увидит «Это время только что заняли» и свободные слоты.</p></li><li><h3>Тексты бота = тексты видео</h3><p>Видео собрано по тому же сценарию, который проверяют тесты: каждое сообщение и каждая кнопка совпадают слово в слово.</p></li></ul></div></section>
+<section class="case-sec" aria-labelledby="tests-title"><h2 id="tests-title">Тесты</h2><div class="case-sec__body"><p>37 тестов проходят меньше чем за секунду и без сети: вместо Telegram — тестовая сессия, которая записывает ответы бота и нажимает кнопки.</p>
+<pre class="term"><code><span class="term__cmd">pytest -q</span>
+.....................................  [100%]
+<span class="term__ok">37 passed in 0.37s</span>
+<span class="term__cmd">ruff check .</span>
+<span class="term__ok">All checks passed!</span></code></pre>
+<ul class="checks"><li>Сценарий из видео — слово в слово</li><li>Сетка времени, перерыв, выходные и запас в час до начала</li><li>Двое записываются на одно время — проходит только один</li><li>Перенос и отмена освобождают время и пересчитывают напоминания</li><li>Напоминания после перезапуска, простоя и сбоя сети</li><li>Кнопки «Назад» и «Изменить», устаревшие кнопки, лимит записей</li></ul>
+<p class="note">Тесты и линтер запускаются на GitHub при каждом изменении кода.</p></div></section>
+<section class="case-sec" aria-labelledby="open-title"><h2 id="open-title">Открытые вопросы</h2><div class="case-sec__body"><ul class="checks checks--open"><li>Один процесс бота на одну базу. Для нескольких копий бота нужна PostgreSQL.</li><li>У мастеров общий график — часы работы салона. Личные графики и отпуска — следующий шаг.</li><li>Нет онлайн-оплаты и синхронизации с CRM или календарём.</li></ul></div></section>
+<section class="case-sec" aria-labelledby="result-title"><h2 id="result-title">Результат</h2><div class="case-sec__body"><p>Код с тестами и README: как запустить бота на своём сервере и настроить салон. Плюс короткая сводка — такая же, как на этой странице.</p>
+<div class="downloads"><a class="btn btn--ghost" href="https://github.com/just-nvk/mint-bot" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>Код на GitHub</a><a class="btn btn--ghost" href="../../files/mint-bot.zip" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Скачать ZIP <small>42 КБ</small></a></div></div></section>
+</div>
+<section class="section" aria-labelledby="cta-title"><div class="container"><div class="cta-band">
+<div><h2 id="cta-title">Нужен такой бот?</h2><p>Расскажите, как сейчас к вам записываются, — предложу сценарий и назову цену и срок до начала работы.</p></div>
+<div class="cta-band__act"><a class="btn btn--light" href="https://t.me/just_nvk" target="_blank" rel="noopener">Написать в Telegram</a><span class="cta-band__handle">Telegram @just_nvk</span></div>
+</div></div></section>
+</main>
+<footer class="site-footer"><div class="container">
+<div class="site-footer__grid">
+<div class="site-footer__about"><a class="wordmark" href="../../" aria-label="nvk — на главную">nvk<i>.</i></a><p>Кейсы на сайте — <span class="nw">демо-проекты</span>: компании, люди и цифры вымышлены, работа настоящая.</p></div>
+<div><h2>Направления</h2><ul><li><a href="../../design/">Презентации и инфографика</a></li><li><a href="../../dev/">Боты и автоматизация</a></li></ul></div>
+<div><h2>Связь</h2><ul><li><a href="https://t.me/just_nvk" target="_blank" rel="noopener">Telegram @just_nvk</a></li></ul></div>
+</div>
+<p class="site-footer__copy">© 2026 nvk</p>
+</div></footer>
+<script src="../../assets/js/site.js?v=47641e12" defer></script>
+</body>
+</html>

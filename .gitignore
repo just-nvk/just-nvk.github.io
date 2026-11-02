@@ -1,0 +1,5 @@
+qa/
+og/
+preview/
+node_modules/
+.DS_Store

@@ -1,0 +1,98 @@
+# Сайт-портфолио nvk
+
+Статический сайт без зависимостей. Тексты и данные — в `content.mjs`, сборка — `node build.mjs` (Node.js 18+), результат — папка `docs/`. Её и публикует GitHub Pages.
+
+## Структура
+
+```
+content.mjs        все тексты и данные: кейсы, услуги, FAQ, ссылки
+build.mjs          сборщик: HTML, типографика, проверка ссылок
+src/
+  css/site.css     стили
+  js/site.js       просмотр слайдов и автозапуск видео на страницах кейсов
+  fonts/           Manrope и Inter (woff2)
+  img/             картинки кейсов; img/og — превью для ссылок
+  video/           видео кейса с ботом (MP4, без звука)
+  files/           файлы для скачивания: PPTX и PDF питч-дека, ZIP с кодом бота
+  favicon.svg, apple-touch-icon.png
+tools/             crop.py (резать длинные скриншоты), touch-icon.html (исходник иконки)
+docs/              готовый сайт — руками не править, перезаписывается при сборке
+```
+
+## Сборка
+
+```sh
+node build.mjs                          # чистовая сборка в docs/
+node build.mjs --drafts --out=preview   # с черновыми карточками «В работе» и «Скоро» — только для просмотра
+node build.mjs --og                     # плюс HTML-шаблоны картинок превью в og/
+```
+
+Сборщик сам расставляет неразрывные пробелы, копирует `src/` в `docs/assets/` и проверяет внутренние ссылки. Сборку с `--drafts` не публикуйте: собирайте её в отдельную папку, как в примере.
+
+Посмотреть локально:
+
+```sh
+python3 -m http.server -d docs 8000     # затем открыть http://localhost:8000/
+```
+
+## Публикация на GitHub Pages
+
+Адрес уже вписан в `content.mjs` → `site.url`: `https://just-nvk.github.io/`. Он подходит, если репозиторий называется `just-nvk.github.io`.
+
+1. Создайте на GitHub публичный репозиторий `just-nvk.github.io` — пустой, без README и .gitignore. На бесплатном тарифе Pages работает только с публичными.
+2. Отправьте в него эту папку:
+   ```sh
+   git init -b main
+   git add .
+   git commit -m "Сайт-портфолио"
+   git remote add origin https://github.com/just-nvk/just-nvk.github.io.git
+   git push -u origin main
+   ```
+3. В репозитории откройте Settings → Pages → Build and deployment. Source: Deploy from a branch, Branch: `main`, папка `/docs` → Save.
+4. Через пару минут сайт откроется по адресу `https://just-nvk.github.io/`.
+
+Если назвать репозиторий иначе, например `portfolio`, сайт будет по адресу `https://just-nvk.github.io/portfolio/`. Впишите его в `site.url`, пересоберите (`node build.mjs`) и отправьте изменения. Свой домен подключается в Settings → Pages → Custom domain — тогда в `site.url` укажите его. Адрес нужен для картинки в превью ссылок, canonical и `sitemap.xml`.
+
+Кнопка «Код на GitHub» на странице бота ведёт в репозиторий `just-nvk/mint-bot`. Опубликуйте его раньше, чем начнёте делиться ссылкой на сайт.
+
+Telegram запоминает превью ссылки. Если ссылку отправляли до того, как появилась картинка, обновите превью через бота @WebpageBot.
+
+## Картинки превью
+
+Готовые лежат в `src/img/og/` (1200×630). Если поменяли заголовки:
+
+```sh
+node build.mjs --og
+for k in hub design dev rovno mint; do
+  chromium --headless --hide-scrollbars --window-size=1200,630 --virtual-time-budget=3000 \
+    --screenshot="src/img/og/$k.png" "file://$PWD/og/$k.html"
+done
+node build.mjs
+```
+
+Вместо `chromium` подойдёт `google-chrome`.
+
+## Видео и код бота
+
+- Видео — `src/video/`: широкое `mint-demo.mp4` (1920×1080) показывается на экранах от 700 px, вертикальное `mint-demo-vertical.mp4` (720×1280) — на телефонах. Постеры — `src/img/mint/`. Если перерендерили ролики, сожмите их для сайта (около 3 МБ каждый):
+  ```sh
+  ffmpeg -i bot-demo.mp4 -an -r 30 -c:v libx264 -preset slow -crf 28 -pix_fmt yuv420p -movflags +faststart src/video/mint-demo.mp4
+  ffmpeg -i bot-demo-vertical.mp4 -an -r 30 -vf scale=720:-2 -c:v libx264 -preset slow -crf 28 -pix_fmt yuv420p -movflags +faststart src/video/mint-demo-vertical.mp4
+  ```
+- Код бота для скачивания — `src/files/mint-bot.zip`. Если код изменился, пересоберите архив из папки бота без `.venv`, `data/` и `.env` — или скачайте свежий с GitHub: Code → Download ZIP.
+
+## Как добавить кейс
+
+1. Карточка — в `content.mjs`, массив `cases`. `status: 'draft'` — карточка видна только в сборке с `--drafts`, `'ready'` — на сайте. Готовому кейсу нужны `href` (адрес страницы) и `cover`: путь к картинке в `src/img/` без суффикса, рядом должны лежать версии `-800.webp` и `-1600.webp` (16:9).
+2. Страницу кейса собирает своя функция в `build.mjs` (образцы — `pageRovno()` со слайдами и `pageMint()` с видео и кодом), тексты страницы — в `content.mjs` (объекты `rovno` и `mint`). Файлы для скачивания кладите в `src/files/`.
+3. Пока у направления нет готовых кейсов, блок кейсов на его странице скрыт. Если готовый кейс один, карточка растягивается на всю ширину.
+
+## Цены
+
+Цены «от» и сроки услуг — в `content.mjs`, поля `price` и `time` у `services` в объектах `design` и `dev`. Те же цифры повторяются в ответах FAQ «Сколько стоит…» — меняйте вместе.
+
+## Лицензии
+
+- Шрифты Manrope и Inter — SIL Open Font License 1.1: можно использовать на сайте, в том числе коммерческом.
+- Фото в питч-деке — Unsplash License: бесплатно, в том числе для коммерческих проектов.
+- Кейсы — демо-проекты: компании, люди и цифры вымышлены.

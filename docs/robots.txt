@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://just-nvk.github.io/sitemap.xml
