@@ -68,7 +68,7 @@ Telegram запоминает превью ссылки. Если ссылку �
 
 ```sh
 node build.mjs --og
-for k in hub design dev rovno ai mint leads polka; do
+for k in hub design dev rovno ai kedr mint leads polka; do
   chromium --headless --hide-scrollbars --window-size=1200,630 --virtual-time-budget=3000 \
     --screenshot="src/img/og/$k.png" "file://$PWD/og/$k.html"
 done

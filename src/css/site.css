@@ -289,6 +289,8 @@ a.card:hover{border-color:var(--line-strong)}
 .gallery--cards a:hover{border-color:var(--ink)}
 .gallery--cards img{width:100%;height:auto}
 @media (max-width:899px){.gallery--cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}}
+.gallery--34 a{background:#EEECE5;border-color:var(--line)}
+.case-shot a{display:block;border-radius:var(--radius-sm)}
 .sources{display:grid;gap:12px}
 .sources li{padding:18px 22px;background:var(--white);border:1px solid var(--line);border-radius:var(--radius)}
 .sources a{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--accent);text-decoration:none}
