@@ -58,7 +58,7 @@ python3 -m http.server -d docs 8000     # затем открыть http://local
 
 Если назвать репозиторий иначе, например `portfolio`, сайт будет по адресу `https://just-nvk.github.io/portfolio/`. Впишите его в `site.url`, пересоберите (`node build.mjs`) и отправьте изменения. Свой домен подключается в Settings → Pages → Custom domain — тогда в `site.url` укажите его. Адрес нужен для картинки в превью ссылок, canonical и `sitemap.xml`.
 
-Кнопки «Код на GitHub» на страницах кейсов ведут в репозитории `just-nvk/mint-bot` и `just-nvk/metr-leads`. Опубликуйте их раньше, чем начнёте делиться ссылкой на сайт.
+Кнопки «Код на GitHub» на страницах кейсов ведут в репозитории `just-nvk/mint-bot`, `just-nvk/metr-leads` и `just-nvk/polka-report`. Опубликуйте их раньше, чем начнёте делиться ссылкой на сайт.
 
 Telegram запоминает превью ссылки. Если ссылку отправляли до того, как появилась картинка, обновите превью через бота @WebpageBot.
 
@@ -68,7 +68,7 @@ Telegram запоминает превью ссылки. Если ссылку �
 
 ```sh
 node build.mjs --og
-for k in hub design dev rovno ai mint leads; do
+for k in hub design dev rovno ai mint leads polka; do
   chromium --headless --hide-scrollbars --window-size=1200,630 --virtual-time-budget=3000 \
     --screenshot="src/img/og/$k.png" "file://$PWD/og/$k.html"
 done
@@ -85,12 +85,13 @@ node build.mjs
   ffmpeg -i bot-demo-vertical.mp4 -an -r 30 -vf scale=720:-2 -c:v libx264 -preset slow -crf 28 -pix_fmt yuv420p -movflags +faststart src/video/mint-demo-vertical.mp4
   ```
 - Сервис заявок: видео `leads-demo.mp4` и `leads-demo-vertical.mp4` (около 1 МБ каждое), постеры и скриншоты галереи — `src/img/leads/` (галерея 16:10: `-800.webp` и `-1600.webp`). Исходники видео и скриншотов — в папке проекта `case4-leads`.
-- Код для скачивания — `src/files/mint-bot.zip` и `src/files/metr-leads.zip`. Если код изменился, пересоберите архив из папки проекта без `.venv`, `data/` и `.env` (например, `git archive --format=zip --prefix=metr-leads/ -o …/src/files/metr-leads.zip HEAD`) — или скачайте свежий с GitHub: Code → Download ZIP.
+- Отчёт для «Полки»: обложка — `src/img/polka/hero-800/1600/2400.webp` (16:9, на экранах от 700 px) и `hero-tall-800/1600.webp` (4:5, на телефонах), карточка — `cover`, галерея 16:10 — `summary`, `checks`, `products`, `run`. Исходники — в папке проекта `case5-polka` (`shots.py` → `gallery.py` и `hero.py`).
+- Код для скачивания — `src/files/mint-bot.zip`, `src/files/metr-leads.zip` и `src/files/polka-report.zip`, пример отчёта — `src/files/polka-otchet-oktyabr-2026.xlsx` (собирается командой `python -m polka_report` в папке `polka-report`). Если код изменился, пересоберите архив из папки проекта без `.venv`, `data/` и `.env` (например, `git archive --format=zip --prefix=metr-leads/ -o …/src/files/metr-leads.zip HEAD`) — или скачайте свежий с GitHub: Code → Download ZIP.
 
 ## Как добавить кейс
 
 1. Карточка — в `content.mjs`, массив `cases`. `status: 'draft'` — карточка видна только в сборке с `--drafts`, `'ready'` — на сайте. Готовому кейсу нужны `href` (адрес страницы) и `cover`: путь к картинке в `src/img/` без суффикса, рядом должны лежать версии `-800.webp` и `-1600.webp` (16:9). Для картинок другого формата у `picture()` есть параметры `widths`, `w` и `h` — так подключены карточки карусели 4:5 (`-540.webp` и `-1080.webp`).
-2. Страницу кейса собирает своя функция в `build.mjs` (образцы — `pageRovno()` со слайдами, `pageAi()` с карточками карусели и `pageMint()` с видео и кодом, `pageLeads()` — то же плюс галерея скриншотов), тексты страницы — в `content.mjs` (объекты `rovno`, `ai`, `mint` и `leads`). Файлы для скачивания кладите в `src/files/`.
+2. Страницу кейса собирает своя функция в `build.mjs` (образцы — `pageRovno()` со слайдами, `pageAi()` с карточками карусели и `pageMint()` с видео и кодом, `pageLeads()` — то же плюс галерея скриншотов, `pagePolka()` — с картинкой вместо видео), тексты страницы — в `content.mjs` (объекты `rovno`, `ai`, `mint`, `leads` и `polka`). Файлы для скачивания кладите в `src/files/`.
 3. Пока у направления нет готовых кейсов, блок кейсов на его странице скрыт. Если готовый кейс один, карточка растягивается на всю ширину.
 
 ## Цены

@@ -398,6 +398,16 @@ ${video(V.tall, 'tall')}
 </figure></div>`;
 }
 
+// Обложка-картинка кейса: широкая на компьютере, вертикальная на телефоне.
+function caseHeroImage(r, H) {
+  const tall = [800, 1600].map((x) => `${r}assets/img/${H.tall}-${x}.webp ${x}w`).join(', ');
+  const img = picture(r, H.wide, { w: 1600, h: 900, alt: H.alt, sizes: '(max-width: 1199px) 100vw, 1120px', widths: [800, 1600, 2400], eager: true });
+  return `<div class="container"><figure class="case-shot">
+<picture><source media="(max-width: 699px)" srcset="${tall}" sizes="100vw" width="800" height="1000">${img}</picture>
+<figcaption>${T(H.caption)}</figcaption>
+</figure></div>`;
+}
+
 async function pageMint() {
   const M = C.mint;
   const page = {
@@ -490,6 +500,57 @@ ${ctaBand(L.ctaBand)}`;
   return { page, html: layout(page, main) };
 }
 
+async function pagePolka() {
+  const P = C.polka;
+  const page = {
+    path: 'cases/polka/', root: '../../', og: 'polka', title: P.title, description: P.description, js: true,
+    nav: [['../../dev/#services', 'Услуги'], ['../../dev/#cases', 'Кейсы'], ['../../dev/#process', 'Как я работаю'], ['../../dev/#faq', 'Вопросы']],
+  };
+  const r = page.root;
+  const termLine = ([kind, line]) => {
+    if (kind === 'out') return esc(line);
+    if (kind === 'progress') { const [dots, pct] = line.split(/\s+(?=\[)/); return `<span class="term__progress"><span>${esc(dots)}</span><span>${esc(pct)}</span></span>`; }
+    return `<span class="term__${kind}">${esc(line)}</span>`;
+  };
+  const term = P.terminal.map(termLine).join('\n');
+  const shots = P.shots.map((s, i) => {
+    const n = String(i + 1).padStart(2, '0');
+    const img = picture(r, s.src, { w: 1600, h: 1000, alt: s.alt, sizes: '(max-width: 699px) 100vw, 548px' });
+    return `<figure><a href="${r}assets/img/${s.src}-1600.webp" data-lightbox data-caption="${esc(s.caption)}">${img}</a><figcaption><b>${n}</b>${T(s.caption)}</figcaption></figure>`;
+  }).join('\n');
+  const main = `<section class="case-hero"><div class="container">
+<nav class="crumbs" aria-label="Вы здесь"><a href="${r}dev/#cases">${ICON.back}${T('Боты и автоматизация')}</a></nav>
+<span class="kicker">${T(P.kicker)}</span>
+<h1>${T(P.h1)}</h1>
+<p class="lead">${T(P.lead)}</p>
+${caseFacts(P.facts)}
+</div></section>
+${caseHeroImage(r, P.hero)}
+<div class="container case-body">
+${caseSec('task', 'Задача', P.task.map((p) => `<p>${T(p)}</p>`).join(''))}
+${caseSec('solution', 'Решение', `<p>${T(P.solutionLead)}</p>
+${flow(P.flow, 'Путь данных')}
+${tiles(P.features)}
+<p>${T(P.solutionNote)}</p>`)}
+<div class="gallery">
+${shots}
+</div>
+${caseSec('arch', 'Как устроено', `<p>${T(P.archLead)}</p>
+${flow(P.archFlow, 'Путь данных по коду', 'flow--code', esc)}
+<dl class="arch">${P.arch.map(([k, v]) => `<div><dt><code>${esc(k)}</code></dt><dd>${T(v)}</dd></div>`).join('')}</dl>`)}
+${caseSec('decisions', 'Ключевые решения', tiles(P.decisions))}
+${caseSec('tests', 'Тесты', `<p>${T(P.testsLead)}</p>
+<pre class="term"><code>${term}</code></pre>
+<ul class="checks">${P.tests.map((t) => `<li>${T(t)}</li>`).join('')}</ul>
+<p class="note">${T(P.testsNote)}</p>`)}
+${caseSec('open', 'Открытые вопросы', `<ul class="checks checks--open">${P.open.map((t) => `<li>${T(t)}</li>`).join('')}</ul>`)}
+${caseSec('result', 'Результат', `<p>${T(P.resultLead)}</p>
+${await downloadButtons(r, P.downloads)}`)}
+</div>
+${ctaBand(P.ctaBand)}`;
+  return { page, html: layout(page, main) };
+}
+
 function page404() {
   const home = SITE_URL || '/';
   return `<!doctype html>
@@ -544,6 +605,8 @@ html,body{width:1200px;height:630px;margin:0;overflow:hidden}
 .og .chat-snippet .tg-kb span{font-size:15px;padding:10px 6px}
 .og .chat-snippet .tg-pill{font-size:14px}
 .og__cover{border-radius:12px;border:1px solid var(--line);overflow:hidden;background:#fff}
+.og__sheet{position:absolute;right:0;top:70px;width:584px;height:490px;overflow:hidden;border-radius:14px 0 0 14px;background:var(--surface)}
+.og__sheet img{position:absolute;left:-176px;top:-18px;width:1040px;max-width:none;height:auto}
 .og__phone{position:absolute;right:136px;top:35px;width:288px;height:560px;overflow:hidden}
 .og__phone img{position:absolute;left:-390px;top:-20px;width:1068px;max-width:none;height:auto}
 .og__phone--v{right:150px;width:269px;border-radius:36px}
@@ -562,6 +625,7 @@ html,body{width:1200px;height:630px;margin:0;overflow:hidden}
   if (kind === 'mint') return shell('', `<div><span class="kicker">${T('Кейс · Демо-проект')}</span><h1>${T(C.mint.h1)}</h1><p>${T('Python · aiogram 3 · 37 тестов')}</p></div><div class="og__phone"><img src="${r}img/mint/poster-1600.webp" alt=""></div>`);
   // Телефон вырезан из вертикального постера (720×1280): телефон занимает x 96–624, y 150–1250.
   if (kind === 'leads') return shell('', `<div><span class="kicker">${T('Кейс · Демо-проект')}</span><h1>${T(C.leads.h1)}</h1><p>${T('Python · FastAPI · 70 тестов')}</p></div><div class="og__phone og__phone--v"><img src="${r}img/leads/poster-vertical.webp" alt=""></div>`);
+  if (kind === 'polka') return shell('', `<div><span class="kicker">${T('Кейс · Демо-проект')}</span><h1>${T(C.polka.h1)}</h1><p>${T('Python · pandas · 114 тестов')}</p></div><div class="og__sheet"><img src="${r}img/polka/cover-1600.webp" alt=""></div>`);
   if (kind === 'ai') return shell('', `<div><span class="kicker">${T('Кейс · Демо-проект')}</span><h1>${T('Карусель «ИИ в 2026»')}</h1><p>${T('8 карточек · реальные данные')}</p></div><div class="og__cards"><img class="og__card og__card--back" src="${r}img/ai/card-04-1080.webp" alt=""><img class="og__card og__card--front" src="${r}img/ai/card-01-1080.webp" alt=""></div>`);
   return shell('', `<div><span class="kicker">${T('Кейс · Демо-проект')}</span><h1>${T('Питч-дек «Ровно»')}</h1><p>${T('12 слайдов · PowerPoint и PDF')}</p></div><div class="og__cover"><img src="${slide(1)}" alt=""></div>`);
 }
@@ -596,7 +660,7 @@ async function main() {
   hash.update(await readFile(path.join(SRC, 'js', 'site.js')));
   ASSET_V = hash.digest('hex').slice(0, 8);
 
-  const pages = [pageHub(), pageDirection('design'), pageDirection('dev'), await pageRovno(), await pageAi(), await pageMint(), await pageLeads()];
+  const pages = [pageHub(), pageDirection('design'), pageDirection('dev'), await pageRovno(), await pageAi(), await pageMint(), await pageLeads(), await pagePolka()];
   for (const { page, html } of pages) {
     const file = path.join(OUT, page.path, 'index.html');
     await mkdir(path.dirname(file), { recursive: true });
@@ -622,7 +686,7 @@ async function main() {
 
   if (MAKE_OG) {
     await mkdir(path.join(ROOT, 'og'), { recursive: true });
-    for (const k of ['hub', 'design', 'dev', 'rovno', 'ai', 'mint', 'leads']) await writeFile(path.join(ROOT, 'og', `${k}.html`), ogPage(k));
+    for (const k of ['hub', 'design', 'dev', 'rovno', 'ai', 'mint', 'leads', 'polka']) await writeFile(path.join(ROOT, 'og', `${k}.html`), ogPage(k));
     console.log('✓ og/*.html');
   }
   console.log(`Готово: ${path.relative(ROOT, OUT) || '.'}${DRAFTS ? ' (с черновиками)' : ''}${problems ? `, проблем со ссылками: ${problems}` : ''}`);

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Кейс: отчёт по продажам для «Полки» — nvk</title>
+<meta name="description" content="Демо-проект: скрипт на Python и pandas за секунду собирает выгрузки касс и сайта в один отчёт в Excel — с формулами, графиком и сверкой каждой строки. Код с тестами.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="nvk">
+<meta property="og:title" content="Кейс: отчёт по продажам для «Полки» — nvk">
+<meta property="og:description" content="Демо-проект: скрипт на Python и pandas за секунду собирает выгрузки касс и сайта в один отчёт в Excel — с формулами, графиком и сверкой каждой строки. Код с тестами.">
+<link rel="canonical" href="https://just-nvk.github.io/cases/polka/">
+<meta property="og:url" content="https://just-nvk.github.io/cases/polka/">
+<meta property="og:image" content="https://just-nvk.github.io/assets/img/og/polka.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FAFAF7">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+<link rel="preload" href="../../assets/fonts/inter-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/css/site.css?v=aff343ee">
+</head>
+<body>
+<a class="skip" href="#main">Перейти к содержанию</a>
+<header class="site-header"><div class="container site-header__in">
+<a class="wordmark" href="../../" aria-label="nvk — на главную">nvk<i>.</i></a>
+<nav class="nav" aria-label="Разделы"><a href="../../dev/#services">Услуги</a><a href="../../dev/#cases">Кейсы</a><a href="../../dev/#process">Как я работаю</a><a href="../../dev/#faq">Вопросы</a></nav>
+<a class="btn btn--primary btn--sm" href="https://t.me/just_nvk" target="_blank" rel="noopener">Написать в Telegram</a>
+</div></header>
+<main id="main">
+<section class="case-hero"><div class="container">
+<nav class="crumbs" aria-label="Вы здесь"><a href="../../dev/#cases"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Боты и автоматизация</a></nav>
+<span class="kicker"><span class="nw">Демо-проект</span> · Отчёты</span>
+<h1>Отчёт по продажам для «Полки»</h1>
+<p class="lead">Вымышленный магазин товаров для дома: две точки и сайт, у каждого своя выгрузка. Скрипт за секунду сводит их в один отчёт в Excel с формулами и графиком — и показывает, куда делась каждая строка, которая в отчёт не попала.</p>
+<ul class="facts"><li><span>Стек</span><b>Python · pandas</b></li><li><span>На входе</span><b>CSV и Excel как есть</b></li><li><span>Отчёт</span><b>Excel, итоги — формулы</b></li><li><span>Тесты</span><b>114 тестов на pytest</b></li></ul>
+</div></section>
+<div class="container"><figure class="case-shot">
+<picture><source media="(max-width: 699px)" srcset="../../assets/img/polka/hero-tall-800.webp 800w, ../../assets/img/polka/hero-tall-1600.webp 1600w" sizes="100vw" width="800" height="1000"><img src="../../assets/img/polka/hero-800.webp" srcset="../../assets/img/polka/hero-800.webp 800w, ../../assets/img/polka/hero-1600.webp 1600w, ../../assets/img/polka/hero-2400.webp 2400w" sizes="(max-width: 1199px) 100vw, 1120px" width="1600" height="900" alt="Слева — три выгрузки как есть: Excel сайта с шапкой в четвёртой строке, CSV кассы в Windows-1251 с опечаткой в сумме и CSV с разделителем «;». Справа — лист «Сводка» собранного отчёта с выручкой, таблицей по магазинам и графиком по дням" fetchpriority="high" decoding="async"></picture>
+<figcaption>Настоящие строки из примеров выгрузок и лист «Сводка» отчёта, который из них собрался.</figcaption>
+</figure></div>
+<div class="container case-body">
+<section class="case-sec" aria-labelledby="task-title"><h2 id="task-title">Задача</h2><div class="case-sec__body"><p>У «Полки» два магазина и интернет-магазин. Каждый месяц из трёх систем приходят выгрузки: кассы отдают CSV в разных кодировках, сайт — Excel с названием и периодом над таблицей. Их сводили руками: полдня копирования, а потом вопрос «почему не сходится с кассой».</p><p>Нужен отчёт, который собирается из выгрузок как есть, считает выручку и прибыль по магазинам, дням и товарам и объясняет каждое расхождение.</p></div></section>
+<section class="case-sec" aria-labelledby="solution-title"><h2 id="solution-title">Решение</h2><div class="case-sec__body"><p>Положить выгрузки в папку и запустить скрипт — через секунду готов отчёт. Каждую цифру в нём можно проверить, а каждая отложенная строка видна с причиной.</p>
+<ol class="flow" aria-label="Путь данных"><li><span>Выгрузки</span></li><li><span>Чтение</span></li><li><span>Чистка</span></li><li><span>Сверка</span></li><li><span>Отчёт в Excel</span></li></ol>
+<ul class="decisions"><li><h3>Читает выгрузки как есть</h3><p>CSV в UTF-8 или Windows-1251, с «;», «,» или табуляцией. Excel, где таблица начинается не с первой строки. Колонки — в любом порядке и с любыми названиями.</p></li><li><h3>Приводит данные к одному виду</h3><p>Суммы «1 290,50 ₽» и «1.290,50», даты «01.10.26» и «<span class="nw">2026-10</span>-01», артикулы «pl1001» и «PL-1001». Возвраты — с минусом, даже если касса пишет их без него.</p></li><li><h3>Не считает лишнего</h3><p>Строки, попавшие сразу в две выгрузки, берёт один раз. Отмены и дни соседнего месяца откладывает, строку «Итого» не путает с продажей.</p></li><li><h3>Пять листов в отчёте</h3><p>Сводка с графиком на одном листе A4, выручка по дням, товары с <span class="nw">ABC-анализом</span>, проверки и все продажи одной таблицей с фильтрами — для своих сводных.</p></li></ul>
+<p>Названия колонок, справочник товаров с себестоимостью, пороги ABC и папки лежат в одном файле настроек. Если касса переименует колонку, скрипт остановится и скажет, какую строку в настройках поправить.</p></div></section>
+<div class="gallery">
+<figure><a href="../../assets/img/polka/summary-1600.webp" data-lightbox data-caption="Сводка: каждая цифра — формула по таблице продаж"><img src="../../assets/img/polka/summary-800.webp" srcset="../../assets/img/polka/summary-800.webp 800w, ../../assets/img/polka/summary-1600.webp 1600w" sizes="(max-width: 699px) 100vw, 548px" width="1600" height="1000" alt="Лист «Сводка»: выручка 6 236 767 ₽, таблица по магазинам, график выручки по дням и панель сверки с выгрузками; в строке формул — СУММЕСЛИМН по умной таблице «Продажи»" loading="lazy" decoding="async"></a><figcaption><b>01</b>Сводка: каждая цифра — формула по таблице продаж</figcaption></figure>
+<figure><a href="../../assets/img/polka/checks-1600.webp" data-lightbox data-caption="Проверки: куда делась каждая строка каждого файла"><img src="../../assets/img/polka/checks-800.webp" srcset="../../assets/img/polka/checks-800.webp 800w, ../../assets/img/polka/checks-1600.webp 1600w" sizes="(max-width: 699px) 100vw, 548px" width="1600" height="1000" alt="Лист «Проверки»: по каждому файлу — строк в файле, в отчёте, дублей, другой месяц, отмены и ошибки; ниже — строки с ошибками с номером строки и причиной" loading="lazy" decoding="async"></a><figcaption><b>02</b>Проверки: куда делась каждая строка каждого файла</figcaption></figure>
+<figure><a href="../../assets/img/polka/products-1600.webp" data-lightbox data-caption="Товары: выручка, прибыль, маржа и ABC-анализ"><img src="../../assets/img/polka/products-800.webp" srcset="../../assets/img/polka/products-800.webp 800w, ../../assets/img/polka/products-1600.webp 1600w" sizes="(max-width: 699px) 100vw, 548px" width="1600" height="1000" alt="Лист «Товары»: продажи, возвраты, выручка, прибыль, маржа и класс ABC по каждому товару; в строке формул — формула класса ABC" loading="lazy" decoding="async"></a><figcaption><b>03</b>Товары: выручка, прибыль, маржа и <span class="nw">ABC-анализ</span></figcaption></figure>
+<figure><a href="../../assets/img/polka/run-1600.webp" data-lightbox data-caption="Запуск: понятная ошибка при новом формате и сводка"><img src="../../assets/img/polka/run-800.webp" srcset="../../assets/img/polka/run-800.webp 800w, ../../assets/img/polka/run-1600.webp 1600w" sizes="(max-width: 699px) 100vw, 548px" width="1600" height="1000" alt="Терминал: ошибка о переименованной колонке, исправление в polka.toml и сводка запуска — сколько строк прочитано, сколько дублей и ошибок, выручка и прибыль" loading="lazy" decoding="async"></a><figcaption><b>04</b>Запуск: понятная ошибка при новом формате и сводка</figcaption></figure>
+</div>
+<section class="case-sec" aria-labelledby="arch-title"><h2 id="arch-title">Как устроено</h2><div class="case-sec__body"><p>Чтение, чистка и сборка отчёта разделены. Читатели знают только про форматы файлов, чистка — про правила учёта, а отчёт получает готовую таблицу продаж и список отложенных строк с причинами.</p>
+<ol class="flow flow--code" aria-label="Путь данных по коду"><li><span>readers.py</span></li><li><span>clean.py</span></li><li><span>report.py</span></li><li><span>Excel</span></li></ol>
+<dl class="arch"><div><dt><code>parse.py</code></dt><dd>Числа, даты, артикулы и месяцы — чистые функции</dd></div><div><dt><code>config.py</code></dt><dd>Чтение настроек и понятные ошибки в них</dd></div><div><dt><code>readers.py</code></dt><dd>CSV и Excel: кодировка, разделитель, поиск шапки, строка «Итого»</dd></div><div><dt><code>clean.py</code></dt><dd>Одна таблица продаж и учёт каждой строки, которая в неё не вошла</dd></div><div><dt><code>aggregate.py</code></dt><dd>Те же итоги в pandas: магазины, дни, товары, ABC</dd></div><div><dt><code>report.py</code></dt><dd>Excel-файл: листы, формулы, форматы, график</dd></div><div><dt><code>__main__.py</code></dt><dd>Запуск из терминала и короткая сводка</dd></div><div><dt><code>polka.toml</code></dt><dd>Настройки магазина: источники, колонки, справочник товаров</dd></div></dl></div></section>
+<section class="case-sec" aria-labelledby="decisions-title"><h2 id="decisions-title">Ключевые решения</h2><div class="case-sec__body"><ul class="decisions"><li><h3>Итоги — формулы, а не числа</h3><p>Отчёт проверяют бухгалтер и владелец, им важно видеть, откуда цифра. Формулы ссылаются на колонки умной таблицы и читаются без расшифровки: =СУММЕСЛИМН(Продажи[Сумма];​Продажи[Магазин];​B11).</p></li><li><h3>Excel и pandas считают одно и то же</h3><p>Рядом с формулой записано готовое значение, поэтому цифры видны даже в превью почты и Telegram. Тест пересчитывает все 5 881 формулу в LibreOffice и сверяет с pandas до копейки.</p></li><li><h3>Каждая строка на счету</h3><p>Для каждого файла: строк в файле = в отчёте + дубли + другой месяц + отмены + ошибки. Равенство проверяет формула на листе «Проверки», а сводка сразу показывает, если <span class="nw">что-то</span> не сошлось.</p></li><li><h3>Дубль — только из другого файла</h3><p>Совпадают магазин, чек, позиция, артикул, количество, сумма, дата и операция. Две одинаковые кружки в одном чеке — не дубль, даже если касса не пишет номер позиции.</p></li><li><h3>Опечатка не останавливает отчёт</h3><p>Строка с ошибкой откладывается с номером и причиной, остальное считается. А неверные настройки останавливают сразу — иначе отчёт был бы тихо неправильным.</p></li><li><h3>Прибыль не выдумывается</h3><p>Если товара нет в справочнике, продажа идёт в выручку, но маржа считается только по товарам с себестоимостью. Сам товар попадает в список «добавьте в справочник».</p></li></ul></div></section>
+<section class="case-sec" aria-labelledby="tests-title"><h2 id="tests-title">Тесты</h2><div class="case-sec__body"><p>114 тестов проходят за 10 секунд. Самый важный пересчитывает все формулы отчёта в LibreOffice и сравнивает с pandas: если Excel и код разойдутся хоть на копейку, тест упадёт.</p>
+<pre class="term"><code><span class="term__cmd">pytest -q</span>
+<span class="term__progress"><span>........................................................................</span><span>[ 63%]</span></span>
+<span class="term__progress"><span>..........................................</span><span>[100%]</span></span>
+<span class="term__ok">114 passed in 9.65s</span>
+<span class="term__cmd">ruff check .</span>
+<span class="term__ok">All checks passed!</span></code></pre>
+<ul class="checks"><li>Суммы, даты и артикулы во всех встреченных форматах и отказ на мусоре вроде «119O.00»</li><li>CSV в трёх кодировках и с четырьмя разделителями, Excel с шапкой в четвёртой строке, строка «Итого»</li><li>Дубли на стыке выгрузок, возвраты, отмены, чужой месяц и товары не из справочника</li><li>Номер строки в файле и причина для каждой строки с ошибкой</li><li>Тексты ошибок в настройках и выгрузках</li><li>Структура отчёта: листы, умная таблица, форматы и формулы вместо чисел</li><li>Пересчёт всех формул в LibreOffice и сверка с pandas до копейки</li><li>Запуск из терминала: сводка, выбор месяца и коды ошибок</li></ul>
+<p class="note">Тесты и линтер запускаются на GitHub при каждом изменении кода — вместе с пересчётом в LibreOffice.</p></div></section>
+<section class="case-sec" aria-labelledby="open-title"><h2 id="open-title">Открытые вопросы</h2><div class="case-sec__body"><ul class="checks checks--open"><li>Выгрузки нужно положить в папку: подключения к 1С или API касс нет.</li><li>Читает CSV и XLSX. Старый .xls нужно один раз пересохранить в Excel.</li><li>Один отчёт — один месяц. Сравнения с прошлым месяцем и планом нет.</li><li>Себестоимость берётся из справочника, одна на месяц — без партий и FIFO.</li><li>Данные кассы скрипт не исправляет: строку с ошибкой нужно поправить в выгрузке.</li></ul></div></section>
+<section class="case-sec" aria-labelledby="result-title"><h2 id="result-title">Результат</h2><div class="case-sec__body"><p>Код с тестами и README: как установить, описать колонки своих выгрузок и запускать двойным кликом на Windows. И пример отчёта — его можно открыть в Excel и проверить любую цифру.</p>
+<div class="downloads"><a class="btn btn--ghost" href="https://github.com/just-nvk/polka-report" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>Код на GitHub</a><a class="btn btn--ghost" href="../../files/polka-report.zip" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Скачать ZIP <small>151 КБ</small></a><a class="btn btn--ghost" href="../../files/polka-otchet-oktyabr-2026.xlsx" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Пример отчёта в Excel <small>436 КБ</small></a></div></div></section>
+</div>
+<section class="section" aria-labelledby="cta-title"><div class="container"><div class="cta-band">
+<div><h2 id="cta-title">Нужен такой отчёт?</h2><p>Пришлите пример выгрузки и расскажите, что сейчас считаете вручную, — предложу решение и назову цену и срок до начала работы.</p></div>
+<div class="cta-band__act"><a class="btn btn--light" href="https://t.me/just_nvk" target="_blank" rel="noopener">Написать в Telegram</a><span class="cta-band__handle">Telegram @just_nvk</span></div>
+</div></div></section>
+</main>
+<footer class="site-footer"><div class="container">
+<div class="site-footer__grid">
+<div class="site-footer__about"><a class="wordmark" href="../../" aria-label="nvk — на главную">nvk<i>.</i></a><p>Кейсы на сайте — <span class="nw">демо-проекты</span> для портфолио: заказчики вымышлены, работа настоящая.</p></div>
+<div><h2>Направления</h2><ul><li><a href="../../design/">Презентации и инфографика</a></li><li><a href="../../dev/">Боты и автоматизация</a></li></ul></div>
+<div><h2>Связь</h2><ul><li><a href="https://t.me/just_nvk" target="_blank" rel="noopener">Telegram @just_nvk</a></li></ul></div>
+</div>
+<p class="site-footer__copy">© 2026 nvk</p>
+</div></footer>
+<script src="../../assets/js/site.js?v=aff343ee" defer></script>
+</body>
+</html>
