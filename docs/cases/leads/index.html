@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Кейс: сервис заявок для «Метра» — nvk</title>
+<meta name="description" content="Демо-проект: сервис приёма заявок с сайта на Python и FastAPI. Уведомления менеджерам в Telegram, админка со статусами и выгрузка в Excel. Код с тестами.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="nvk">
+<meta property="og:title" content="Кейс: сервис заявок для «Метра» — nvk">
+<meta property="og:description" content="Демо-проект: сервис приёма заявок с сайта на Python и FastAPI. Уведомления менеджерам в Telegram, админка со статусами и выгрузка в Excel. Код с тестами.">
+<link rel="canonical" href="https://just-nvk.github.io/cases/leads/">
+<meta property="og:url" content="https://just-nvk.github.io/cases/leads/">
+<meta property="og:image" content="https://just-nvk.github.io/assets/img/og/leads.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#FAFAF7">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+<link rel="preload" href="../../assets/fonts/inter-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/css/site.css?v=f6064380">
+</head>
+<body>
+<a class="skip" href="#main">Перейти к содержанию</a>
+<header class="site-header"><div class="container site-header__in">
+<a class="wordmark" href="../../" aria-label="nvk — на главную">nvk<i>.</i></a>
+<nav class="nav" aria-label="Разделы"><a href="../../dev/#services">Услуги</a><a href="../../dev/#cases">Кейсы</a><a href="../../dev/#process">Как я работаю</a><a href="../../dev/#faq">Вопросы</a></nav>
+<a class="btn btn--primary btn--sm" href="https://t.me/just_nvk" target="_blank" rel="noopener">Написать в Telegram</a>
+</div></header>
+<main id="main">
+<section class="case-hero"><div class="container">
+<nav class="crumbs" aria-label="Вы здесь"><a href="../../dev/#cases"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Боты и автоматизация</a></nav>
+<span class="kicker"><span class="nw">Демо-проект</span> · Сервис</span>
+<h1>Сервис заявок для «Метра»</h1>
+<p class="lead">Вымышленная компания «Метр» ремонтирует квартиры. Сервис принимает заявки с сайта, сразу пишет о них менеджерам в Telegram и собирает в простой админке — со статусами, поиском и выгрузкой в Excel.</p>
+<ul class="facts"><li><span>Стек</span><b>Python · FastAPI</b></li><li><span>Хранение</span><b>SQLite — один файл</b></li><li><span>Уведомления</span><b>В Telegram, сразу</b></li><li><span>Тесты</span><b>70 тестов на pytest</b></li></ul>
+</div></section>
+<div class="container"><figure class="case-video">
+<video class="case-video__wide" width="1920" height="1080" controls muted playsinline loop preload="none" data-autoplay poster="../../assets/img/leads/poster-1600.webp" aria-label="Видео: посетитель оставляет заявку на сайте, менеджер сразу получает её в Telegram и берёт в работу в админке"><source src="../../assets/video/leads-demo.mp4" type="video/mp4"></video>
+<video class="case-video__tall" width="720" height="1280" controls muted playsinline loop preload="none" data-autoplay poster="../../assets/img/leads/poster-vertical.webp" aria-label="Видео: посетитель оставляет заявку на сайте, менеджер сразу получает её в Telegram и берёт в работу в админке"><source src="../../assets/video/leads-demo-vertical.mp4" type="video/mp4"></video>
+<figcaption>От формы на сайте до статуса «В работе», без звука. Форма и админка — настоящий сервис, окно Telegram — макет с настоящим текстом уведомления.</figcaption>
+</figure></div>
+<div class="container case-body">
+<section class="case-sec" aria-labelledby="task-title"><h2 id="task-title">Задача</h2><div class="case-sec__body"><p>Заявки с сайта приходят на общую почту. Менеджер видит их через пару часов, часть попадает в спам, а кому уже перезвонили — непонятно.</p><p>Нужен сервис, который принимает заявки с формы на сайте, сразу сообщает о них менеджерам и показывает, что с каждой заявкой происходит.</p></div></section>
+<section class="case-sec" aria-labelledby="solution-title"><h2 id="solution-title">Решение</h2><div class="case-sec__body"><p>Заявка доходит от формы до менеджера за секунду и не теряется, даже если Telegram недоступен.</p>
+<ol class="flow" aria-label="Путь заявки"><li><span>Форма на сайте</span></li><li><span>Проверка</span></li><li><span>База</span></li><li><span>Telegram</span></li><li><span>Админка</span></li></ol>
+<ul class="decisions"><li><h3>Форма за одну строку</h3><p>Подключается к любому сайту и работает даже без JavaScript. Ошибки — <span class="nw">по-русски</span> и под каждым полем.</p></li><li><h3>Уведомление в Telegram</h3><p>Что нужно, площадь, имя, телефон и откуда пришёл посетитель: страница и <span class="nw">UTM-метки</span>. Под сообщением — кнопка «Открыть в админке».</p></li><li><h3>Админка для менеджеров</h3><p>Статусы «Новая», «В работе», «Готово» и «Спам», поиск по имени, телефону и комментарию, выгрузка для Excel.</p></li><li><h3>Защита от мусора</h3><p>Невидимое <span class="nw">поле-ловушка</span> для ботов и лимит заявок с одного адреса. Капчу посетителю решать не нужно.</p></li></ul>
+<p>Название компании, виды работ, текст после отправки и ссылка на политику обработки данных лежат в одном файле настроек — их можно менять без программиста.</p></div></section>
+<div class="gallery">
+<figure><a href="../../assets/img/leads/admin-1600.webp" data-lightbox data-caption="Админка: все заявки, статусы и отметка, дошло ли уведомление"><img src="../../assets/img/leads/admin-800.webp" srcset="../../assets/img/leads/admin-800.webp 800w, ../../assets/img/leads/admin-1600.webp 1600w" sizes="(max-width: 699px) 100vw, 548px" width="1600" height="1000" alt="Админка «Метр · заявки»: таблица из восьми заявок со статусами, источником и отметкой «В Telegram»" loading="lazy" decoding="async"></a><figcaption><b>01</b>Админка: все заявки, статусы и отметка, дошло ли уведомление</figcaption></figure>
+<figure><a href="../../assets/img/leads/form-1600.webp" data-lightbox data-caption="Форма: ошибки под полями, ответ посетителю и уведомление"><img src="../../assets/img/leads/form-800.webp" srcset="../../assets/img/leads/form-800.webp 800w, ../../assets/img/leads/form-1600.webp 1600w" sizes="(max-width: 699px) 100vw, 548px" width="1600" height="1000" alt="Форма заявки с ошибками под полями, экран «Спасибо, Дмитрий!» и уведомление о заявке №9 в Telegram" loading="lazy" decoding="async"></a><figcaption><b>02</b>Форма: ошибки под полями, ответ посетителю и уведомление</figcaption></figure>
+<figure><a href="../../assets/img/leads/phones-1600.webp" data-lightbox data-caption="С телефона: уведомление в Telegram и админка"><img src="../../assets/img/leads/phones-800.webp" srcset="../../assets/img/leads/phones-800.webp 800w, ../../assets/img/leads/phones-1600.webp 1600w" sizes="(max-width: 699px) 100vw, 548px" width="1600" height="1000" alt="Два телефона: чат менеджеров с уведомлениями о заявках и мобильная версия админки" loading="lazy" decoding="async"></a><figcaption><b>03</b>С телефона: уведомление в Telegram и админка</figcaption></figure>
+<figure><a href="../../assets/img/leads/docs-1600.webp" data-lightbox data-caption="Документация API — для подключения CRM"><img src="../../assets/img/leads/docs-800.webp" srcset="../../assets/img/leads/docs-800.webp 800w, ../../assets/img/leads/docs-1600.webp 1600w" sizes="(max-width: 699px) 100vw, 548px" width="1600" height="1000" alt="Страница документации API: приём заявки, список заявок, выгрузка, смена статуса и проверка для мониторинга" loading="lazy" decoding="async"></a><figcaption><b>04</b>Документация API — для подключения CRM</figcaption></figure>
+</div>
+<section class="case-sec" aria-labelledby="arch-title"><h2 id="arch-title">Как устроено</h2><div class="case-sec__body"><p>Приём заявок, хранение и отправка уведомлений разделены. Посетитель получает ответ сразу после записи в базу, а Telegram работает в фоне — его сбой не ломает приём заявок.</p>
+<ol class="flow flow--code" aria-label="Путь заявки по коду"><li><span>app.py</span></li><li><span>storage.py</span></li><li><span>outbox.py</span></li><li><span>Telegram</span></li></ol>
+<dl class="arch"><div><dt><code>app.py</code></dt><dd>Приём заявок: проверка полей, лимит, ответ посетителю</dd></div><div><dt><code>schemas.py</code></dt><dd>Поля формы и ошибки <span class="nw">по-русски</span></dd></div><div><dt><code>domain.py</code></dt><dd>Телефоны, даты, защита выгрузки — чистые функции</dd></div><div><dt><code>storage.py</code></dt><dd>SQLite: заявки и очередь уведомлений</dd></div><div><dt><code>outbox.py</code></dt><dd>Отправляет уведомления в фоне и повторяет при сбоях</dd></div><div><dt><code>telegram.py</code></dt><dd>Текст уведомления и запрос к Telegram</dd></div><div><dt><code>admin.py</code></dt><dd>Админка, выгрузка для Excel и API для CRM</dd></div><div><dt><code>company.toml</code></dt><dd>Настройки компании</dd></div></dl></div></section>
+<section class="case-sec" aria-labelledby="decisions-title"><h2 id="decisions-title">Ключевые решения</h2><div class="case-sec__body"><ul class="decisions"><li><h3>Сначала база, потом Telegram</h3><p>Заявка и задание на уведомление записываются одной транзакцией. Если Telegram недоступен, сервис повторяет отправку сам — через 30 секунд, минуту, две и дальше. Задания хранятся в базе и переживают перезапуск.</p></li><li><h3>Двойной клик — одна заявка</h3><p>У каждой формы свой ключ. Повторная отправка после двойного клика или обрыва связи получает тот же ответ, но вторая заявка не появляется.</p></li><li><h3>Повторные обращения видны</h3><p>8 (916) <span class="nw">123-45</span>-67, +7 916 123 45 67 и 9161234567 — один номер. Если человек написал снова в течение суток, заявка помечается «Повторная» со ссылкой на первую.</p></li><li><h3>Боту — обычное «Спасибо»</h3><p>Если заполнено <span class="nw">поле-ловушка</span>, бот получает тот же ответ, что и человек, и не понимает, что попался. Заявка уходит в «Спам» без уведомления.</p></li><li><h3>Выгрузка открывается в Excel</h3><p>Двойным кликом и без «кракозябр». Формула, введённая в поле «Имя», не выполнится: перед ней ставится апостроф.</p></li><li><h3>Лишнего не храним</h3><p>IP посетителя нужен только для лимита и в базу не попадает. Шрифты лежат в самом сервисе, поэтому страница не обращается к сторонним серверам.</p></li></ul></div></section>
+<section class="case-sec" aria-labelledby="tests-title"><h2 id="tests-title">Тесты</h2><div class="case-sec__body"><p>70 тестов проходят меньше чем за секунду и без сети: вместо Telegram — поддельный сервер, а часы в тестах можно подвинуть вперёд.</p>
+<pre class="term"><code><span class="term__cmd">pytest -q</span>
+<span class="term__progress"><span>......................................................................</span><span>[100%]</span></span>
+<span class="term__ok">70 passed in 0.94s</span>
+<span class="term__cmd">ruff check .</span>
+<span class="term__ok">All checks passed!</span></code></pre>
+<ul class="checks"><li>Форматы телефонов и ошибки в каждом поле</li><li>Ловушка для ботов, лимит с одного адреса и доверие к заголовкам прокси</li><li>Двойная отправка формы и повторные обращения в течение суток</li><li>Текст уведомления слово в слово и кнопка «Открыть в админке»</li><li>Сбой сети, лимит Telegram, неверный токен и перезапуск сервиса</li><li>Вход в админку, поиск, смена статуса и защита от подделки запроса</li><li>Выгрузка для Excel: кодировка, разделитель и защита от формул</li></ul>
+<p class="note">Тесты и линтер запускаются на GitHub при каждом изменении кода.</p></div></section>
+<section class="case-sec" aria-labelledby="open-title"><h2 id="open-title">Открытые вопросы</h2><div class="case-sec__body"><ul class="checks checks--open"><li>Сервис рассчитан на один процесс: лимит частоты хранится в памяти. Для нескольких копий нужны Redis и PostgreSQL.</li><li>Один логин на всех менеджеров и нет истории, кто менял статус.</li><li>Уведомления — только в Telegram. CRM подключается через API, но готовых интеграций с amoCRM или Битрикс24 нет.</li><li>Текст согласия и политику обработки персональных данных готовит компания.</li></ul></div></section>
+<section class="case-sec" aria-labelledby="result-title"><h2 id="result-title">Результат</h2><div class="case-sec__body"><p>Код с тестами и README: как подключить форму к сайту, настроить Telegram и запустить сервис на своём сервере — с примерами для systemd и nginx. Плюс короткая сводка — такая же, как на этой странице.</p>
+<div class="downloads"><a class="btn btn--ghost" href="https://github.com/just-nvk/metr-leads" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>Код на GitHub</a><a class="btn btn--ghost" href="../../files/metr-leads.zip" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Скачать ZIP <small>127 КБ</small></a></div></div></section>
+</div>
+<section class="section" aria-labelledby="cta-title"><div class="container"><div class="cta-band">
+<div><h2 id="cta-title">Нужен такой сервис?</h2><p>Расскажите, откуда приходят заявки и где они теряются, — предложу решение и назову цену и срок до начала работы.</p></div>
+<div class="cta-band__act"><a class="btn btn--light" href="https://t.me/just_nvk" target="_blank" rel="noopener">Написать в Telegram</a><span class="cta-band__handle">Telegram @just_nvk</span></div>
+</div></div></section>
+</main>
+<footer class="site-footer"><div class="container">
+<div class="site-footer__grid">
+<div class="site-footer__about"><a class="wordmark" href="../../" aria-label="nvk — на главную">nvk<i>.</i></a><p>Кейсы на сайте — <span class="nw">демо-проекты</span> для портфолио: заказчики вымышлены, работа настоящая.</p></div>
+<div><h2>Направления</h2><ul><li><a href="../../design/">Презентации и инфографика</a></li><li><a href="../../dev/">Боты и автоматизация</a></li></ul></div>
+<div><h2>Связь</h2><ul><li><a href="https://t.me/just_nvk" target="_blank" rel="noopener">Telegram @just_nvk</a></li></ul></div>
+</div>
+<p class="site-footer__copy">© 2026 nvk</p>
+</div></footer>
+<script src="../../assets/js/site.js?v=f6064380" defer></script>
+</body>
+</html>

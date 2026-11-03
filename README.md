@@ -58,7 +58,7 @@ python3 -m http.server -d docs 8000     # затем открыть http://local
 
 Если назвать репозиторий иначе, например `portfolio`, сайт будет по адресу `https://just-nvk.github.io/portfolio/`. Впишите его в `site.url`, пересоберите (`node build.mjs`) и отправьте изменения. Свой домен подключается в Settings → Pages → Custom domain — тогда в `site.url` укажите его. Адрес нужен для картинки в превью ссылок, canonical и `sitemap.xml`.
 
-Кнопка «Код на GitHub» на странице бота ведёт в репозиторий `just-nvk/mint-bot`. Опубликуйте его раньше, чем начнёте делиться ссылкой на сайт.
+Кнопки «Код на GitHub» на страницах кейсов ведут в репозитории `just-nvk/mint-bot` и `just-nvk/metr-leads`. Опубликуйте их раньше, чем начнёте делиться ссылкой на сайт.
 
 Telegram запоминает превью ссылки. Если ссылку отправляли до того, как появилась картинка, обновите превью через бота @WebpageBot.
 
@@ -68,7 +68,7 @@ Telegram запоминает превью ссылки. Если ссылку �
 
 ```sh
 node build.mjs --og
-for k in hub design dev rovno ai mint; do
+for k in hub design dev rovno ai mint leads; do
   chromium --headless --hide-scrollbars --window-size=1200,630 --virtual-time-budget=3000 \
     --screenshot="src/img/og/$k.png" "file://$PWD/og/$k.html"
 done
@@ -77,19 +77,20 @@ node build.mjs
 
 Вместо `chromium` подойдёт `google-chrome`.
 
-## Видео и код бота
+## Видео и код
 
 - Видео — `src/video/`: широкое `mint-demo.mp4` (1920×1080) показывается на экранах от 700 px, вертикальное `mint-demo-vertical.mp4` (720×1280) — на телефонах. Постеры — `src/img/mint/`. Если перерендерили ролики, сожмите их для сайта (около 3 МБ каждый):
   ```sh
   ffmpeg -i bot-demo.mp4 -an -r 30 -c:v libx264 -preset slow -crf 28 -pix_fmt yuv420p -movflags +faststart src/video/mint-demo.mp4
   ffmpeg -i bot-demo-vertical.mp4 -an -r 30 -vf scale=720:-2 -c:v libx264 -preset slow -crf 28 -pix_fmt yuv420p -movflags +faststart src/video/mint-demo-vertical.mp4
   ```
-- Код бота для скачивания — `src/files/mint-bot.zip`. Если код изменился, пересоберите архив из папки бота без `.venv`, `data/` и `.env` — или скачайте свежий с GitHub: Code → Download ZIP.
+- Сервис заявок: видео `leads-demo.mp4` и `leads-demo-vertical.mp4` (около 1 МБ каждое), постеры и скриншоты галереи — `src/img/leads/` (галерея 16:10: `-800.webp` и `-1600.webp`). Исходники видео и скриншотов — в папке проекта `case4-leads`.
+- Код для скачивания — `src/files/mint-bot.zip` и `src/files/metr-leads.zip`. Если код изменился, пересоберите архив из папки проекта без `.venv`, `data/` и `.env` (например, `git archive --format=zip --prefix=metr-leads/ -o …/src/files/metr-leads.zip HEAD`) — или скачайте свежий с GitHub: Code → Download ZIP.
 
 ## Как добавить кейс
 
 1. Карточка — в `content.mjs`, массив `cases`. `status: 'draft'` — карточка видна только в сборке с `--drafts`, `'ready'` — на сайте. Готовому кейсу нужны `href` (адрес страницы) и `cover`: путь к картинке в `src/img/` без суффикса, рядом должны лежать версии `-800.webp` и `-1600.webp` (16:9). Для картинок другого формата у `picture()` есть параметры `widths`, `w` и `h` — так подключены карточки карусели 4:5 (`-540.webp` и `-1080.webp`).
-2. Страницу кейса собирает своя функция в `build.mjs` (образцы — `pageRovno()` со слайдами, `pageAi()` с карточками карусели и `pageMint()` с видео и кодом), тексты страницы — в `content.mjs` (объекты `rovno`, `ai` и `mint`). Файлы для скачивания кладите в `src/files/`.
+2. Страницу кейса собирает своя функция в `build.mjs` (образцы — `pageRovno()` со слайдами, `pageAi()` с карточками карусели и `pageMint()` с видео и кодом, `pageLeads()` — то же плюс галерея скриншотов), тексты страницы — в `content.mjs` (объекты `rovno`, `ai`, `mint` и `leads`). Файлы для скачивания кладите в `src/files/`.
 3. Пока у направления нет готовых кейсов, блок кейсов на его странице скрыт. Если готовый кейс один, карточка растягивается на всю ширину.
 
 ## Цены
