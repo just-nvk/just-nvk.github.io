@@ -210,7 +210,7 @@ ${main}
 <footer class="site-footer"><div class="container">
 <div class="site-footer__grid">
 <div class="site-footer__about"><a class="wordmark" href="${r || './'}" aria-label="nvk — на главную">nvk<i>.</i></a><p>${T(C.site.disclaimer)}</p></div>
-<div><h2>Направления</h2><ul><li><a href="${r}design/">${T('Презентации и инфографика')}</a></li><li><a href="${r}dev/">${T('Боты и автоматизация')}</a></li></ul></div>
+<div><h2>Направления</h2><ul><li><a href="${r}dev/">${T('Боты и автоматизация')}</a></li><li><a href="${r}design/">${T('Презентации и инфографика')}</a></li></ul></div>
 <div><h2>Связь</h2><ul><li><a href="${TG.url}" target="_blank" rel="noopener">Telegram ${esc(TG.handle)}</a></li></ul></div>
 </div>
 <p class="site-footer__copy">© ${C.site.year} nvk</p>
@@ -227,7 +227,7 @@ function pageHub() {
   const H = C.hub;
   const page = {
     path: '', root: '', og: 'hub', title: H.title, description: H.description,
-    nav: [['design/', 'Презентации'], ['dev/', 'Боты и автоматизация'], ['#process', 'Как я работаю'], ['#about', 'Обо мне']],
+    nav: [['dev/', 'Боты и автоматизация'], ['design/', 'Презентации'], ['#process', 'Как я работаю'], ['#about', 'Обо мне']],
   };
   const dirs = H.directions.map((d) => `<a class="dir" href="${d.href}">
 <div class="dir__media${d.visual === 'chat' ? ' dir__media--chat' : ''}">${d.visual === 'deck' ? deckStack('', { sizes: '(max-width: 899px) 90vw, 440px' }) : chatSnippet({ full: true })}</div>
@@ -660,7 +660,7 @@ html,body{width:1200px;height:630px;margin:0;overflow:hidden}
 </style>`;
   const shell = (cls, inner) => `<!doctype html><html lang="ru"><head><meta charset="utf-8">${css}</head><body><div class="og ${cls}"><span class="wordmark">nvk<i>.</i></span>${inner}<span class="og__foot">t.me/${TG.handle.replace('@', '')}</span></div></body></html>`;
   const slide = (n) => `${r}img/rovno/slide-${String(n).padStart(2, '0')}-1600.webp`;
-  if (kind === 'hub') return shell('og--text', `<div><h1>${T(C.hub.h1)}</h1><p>${T('Презентации и инфографика · Боты и автоматизация на Python')}</p></div>`);
+  if (kind === 'hub') return shell('og--text', `<div><h1>${T(C.hub.h1)}</h1><p>${T('Боты, парсеры и сервисы на Python · Презентации в PowerPoint')}</p></div>`);
   if (kind === 'design') return shell('', `<div><span class="kicker">${T(C.design.kicker)}</span><h1>${T(C.design.h1)}</h1></div><div class="deck-stack"><img class="deck-stack__back" src="${slide(6)}" alt=""><img class="deck-stack__front" src="${slide(1)}" alt=""></div>`);
   if (kind === 'dev') return shell('', `<div><span class="kicker">${T(C.dev.kicker)}</span><h1>${T(C.dev.h1)}</h1></div>${chatSnippet({ full: true })}`);
   // Телефон вырезан из постера видео (кадр 1600×900): телефон занимает x 585–1015, y 30–868.
